@@ -1,0 +1,25 @@
+# Entorno PostgreSQL para el Data Mart de Olist
+# Uso:  docker compose up -d
+# Conexión: host localhost | puerto 5432 | base bi_database | usuario bi_user | contraseña bi_password
+services:
+  db:
+    image: postgres:16
+    container_name: bi_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bi_database
+      POSTGRES_USER: bi_user
+      POSTGRES_PASSWORD: bi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # los datos sobreviven a "docker compose down"
+      - ./:/data:ro                       # esta carpeta (sql/ y archive/) visible dentro del contenedor
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bi_user -d bi_database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
