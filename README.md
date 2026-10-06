@@ -1,9 +1,5 @@
 # Data Mart Olist: Entregable 2
 
-**Universidad Estatal Península de Santa Elena** · Facultad de Sistemas y Telecomunicaciones · Carrera de Software
-**Materia:** Inteligencia de Negocios · **Docente:** Ing. Anthony Abrahan Pachay Espinoza, MSc.
-**Estudiante:** Julio Jose Del Pezo Rodriguez
-
 Data Mart en PostgreSQL con esquema en estrella, construido a partir del dataset público
 [Brazilian E-Commerce by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 (unos 100 mil pedidos entre 2016 y 2018). Permite analizar ventas, logística y satisfacción del cliente
