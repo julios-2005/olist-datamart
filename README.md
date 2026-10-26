@@ -1,5 +1,9 @@
 # Data Mart Olist: Entregable 2
 
+**Universidad Estatal Península de Santa Elena** · Facultad de Sistemas y Telecomunicaciones · Carrera de Software
+**Materia:** Inteligencia de Negocios · **Docente:** Ing. Anthony Abrahan Pachay Espinoza, MSc.
+**Estudiante:** Julio Jose Del Pezo Rodriguez
+
 Data Mart en PostgreSQL con esquema en estrella, construido a partir del dataset público
 [Brazilian E-Commerce by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 (unos 100 mil pedidos entre 2016 y 2018). Permite analizar ventas, logística y satisfacción del cliente
@@ -10,6 +14,12 @@ y alimenta un dashboard de tres pestañas.
 ```
 olist-datamart/
 ├── docker-compose.yml          # PostgreSQL 16 en Docker
+├── app/
+│   ├── app.py                  # aplicación Streamlit (3 vistas, filtros, gráficos, tabla)
+│   ├── db.py                   # conexión a PostgreSQL y consultas
+│   └── requirements.txt        # dependencias de Python
+├── python/
+│   └── perfilado.py            # perfilado inicial de los CSV con pandas (ejecutar desde archive/)
 ├── sql/
 │   ├── 01_staging.sql          # carga de los CSV tal cual (esquema stg)
 │   ├── 02_modelo_dimensional.sql  # tablas, claves y restricciones (esquema dw)
@@ -17,8 +27,10 @@ olist-datamart/
 │   ├── 04_validaciones.sql     # consultas de validación
 │   └── 05_vistas_funciones.sql # vistas y funciones para el dashboard
 ├── docs/
-│   ├── Entregable2_Olist_DataMart.docx   # informe completo
-│   └── Mockup_Dashboard_Olist.html       # mockup del dashboard (abrir en el navegador)
+│   ├── Entregable2_Olist_DataMart.docx   # informe del Entregable 2 (.pdf es su versión PDF)
+│   ├── Mockup_Dashboard_Olist.html       # mockup del dashboard (abrir en el navegador)
+│   ├── Evidencias_IA.md                  # usos significativos de IA documentados
+│   └── Guion_Video.md                    # guion del video de presentación
 └── evidencia/                  # capturas y salida de las validaciones
 ```
 
@@ -132,6 +144,38 @@ SELECT * FROM dw.fn_top_categorias(NULL, NULL, NULL, 5);
 ```
 
 La matriz de trazabilidad (componente → KPI → filtros → objeto SQL) está en la sección 10 del informe.
+
+## Aplicación Streamlit
+
+La aplicación lee **únicamente de PostgreSQL** (vistas y funciones del esquema `dw`); no abre ningún CSV.
+
+### Ejecución
+
+Con PostgreSQL en Docker activo y los scripts 01 a 05 ya ejecutados (sección anterior), desde la raíz del proyecto:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate            # Windows  (Linux/Mac: source .venv/bin/activate)
+pip install -r app/requirements.txt
+streamlit run app/app.py
+```
+
+Se abre en <http://localhost:8501>. La conexión usa por defecto los datos de `docker-compose.yml`
+(`localhost:5432`, `bi_database`, `bi_user`). Si cambiaste el puerto u otros valores, define las variables de entorno
+`PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER` y `PGPASSWORD`.
+
+### Contenido
+
+| Vista | KPI | Gráficos y detalle |
+|---|---|---|
+| Resumen comercial | Ventas totales, pedidos, ticket promedio, % flete | Evolución mensual, top de categorías, tabla de detalle (descargable) |
+| Logística y satisfacción | Tiempo de entrega, % tardías, calificación, % reseñas negativas | Tardías por estado, calificación según puntualidad |
+| Vendedores y pagos | % ventas top 10, tasa de recompra, pedidos | Valor y ticket por medio de pago, ranking de vendedores |
+
+**Filtros** (panel lateral): rango de fechas, categoría de producto y estado del cliente. Se envían como parámetros a las
+funciones SQL, por lo que cambian los resultados. Algunas consultas no usan todos los filtros (por ejemplo, el ranking de
+categorías no usa el de categoría); la aplicación lo indica en cada sección. Cada vista tiene un desplegable
+"Ver consulta SQL utilizada".
 
 ## Comandos útiles de Docker
 
